@@ -1,66 +1,56 @@
-
-console.log("Benvenuto in Coding & Color!");
-
-// Funzione per elaborare i dati
-function elabora() {
-
-    // Recupero i valori inseriti
-    let numero = document.getElementById("inNumber").value;
-    let testo = document.getElementById("inText").value;
-
-    // Recupero gli elementi di output
-    let output = document.getElementById("outText");
-    let error = document.getElementById("error");
-
-    // Cancello i messaggi precedenti
-    error.textContent = "";
-    output.textContent = "";
-
-    // Controllo che i campi non siano vuoti
-    if (numero.trim() === "" || testo.trim() === "") {
-        error.textContent = "Errore: devi compilare tutti i campi!";
-        return;
+function elaboraColoreRGB(inputColore) {
+    let pulito = inputColore.trim().toLowerCase();
+    if (pulito.startsWith("rgb(") && pulito.endsWith(")")) {
+        pulito = pulito.slice(4, -1);
+    }
+    const parti = pulito.split(",");
+    if (parti.length !== 3) {
+        throw new Error("Inserisci esattamente 3 valori separati da virgola (es. 255, 100, 50).");
     }
 
-    // Controllo il formato RGB
-    let regex = /^\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*$/;
+    const valoriNumerici = [];
 
-    let risultato = numero.match(regex);
+    for (let i = 0; i < parti.length; i++) {
+        const val = parti[i].trim();
+        if (val === "" || isNaN(val) || !Number.isInteger(Number(val))) {
+            throw new Error("Ogni componente RGB deve essere un numero intero valido.");
+        }
+        const num = Number(val);
 
-    if (risultato === null) {
-        error.textContent = "Errore: inserisci tre numeri RGB separati da virgole!";
-        return;
+        if (num < 0 || num > 255) {
+            throw new Error("I valori RGB devono essere compresi tra 0 e 255.");
+        }
+
+        valoriNumerici.push(num);
     }
 
-    // Recupero i tre colori
-    let r = Number(risultato[1]);
-    let g = Number(risultato[2]);
-    let b = Number(risultato[3]);
-
-    // Controllo che i valori siano compresi tra 0 e 255
-    if (r > 255 || g > 255 || b > 255) {
-        error.textContent = "Errore: i valori RGB devono essere tra 0 e 255!";
-        return;
-    }
-
-    // Visualizzo il testo con il colore scelto
-    output.textContent = testo;
-    output.style.color = "rgb(" + r + "," + g + "," + b + ")";
-
-    console.log("Testo visualizzato correttamente!");
+    return `rgb(${valoriNumerici[0]}, ${valoriNumerici[1]}, ${valoriNumerici[2]})`;
 }
 
+function gestisciClick() {
+    const inputColore = document.getElementById("coloreRGB").value;
+    const inputTesto = document.getElementById("testoUtente").value;
+    const paragrafoOut = document.getElementById("out");
+    const paragrafoError = document.getElementById("error");
+    paragrafoOut.textContent = "";
+    paragrafoError.textContent = "";
 
-// Funzione per cancellare i dati
-function reset() {
+    console.log("Tentativo di elaborazione -> Colore:", inputColore, "| Testo:", inputTesto);
 
-    document.getElementById("inNumber").value = "";
-    document.getElementById("inText").value = "";
+    try {
+        if (inputTesto.trim() === "") {
+            throw new Error("Inserisci un testo da visualizzare.");
+        }
 
-    document.getElementById("outText").textContent = "Output";
-    document.getElementById("outText").style.color = "black";
+        const coloreValido = elaboraColoreRGB(inputColore);
 
-    document.getElementById("error").textContent = "";
+        paragrafoOut.textContent = inputTesto;
+        paragrafoOut.style.color = coloreValido;
+        
+        console.log("Successo! Colore applicato:", coloreValido);
 
-    console.log("Campi cancellati!");
+    } catch (errore) {
+        paragrafoError.textContent = "Errore: " + errore.message;
+        console.error("Errore di validazione:", errore.message);
+    }
 }
