@@ -9,7 +9,7 @@ function elabora() {
     }
     let parti = colore.split(",");
     if (parti.length !== 3) {
-        err.textContent = "Inserisci 3 numeri separati (es. 255, 0, 0)";
+        err.textContent = "Inserisci 3 numeri (es. 255, 0, 0)";
         return;
     }
     let r = Number(parti[0]);
