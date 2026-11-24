@@ -1,56 +1,31 @@
-function elaboraColoreRGB(inputColore) {
-    let pulito = inputColore.trim().toLowerCase();
-    if (pulito.startsWith("rgb(") && pulito.endsWith(")")) {
-        pulito = pulito.slice(4, -1);
+function elabora() {
+    let colore = document.getElementById("inNumber").value;
+    let testo = document.getElementById("inText").value;
+    let out = document.getElementById("outText");
+    let err = document.getElementById("error");
+    if (testo.trim() === "") {
+        err.textContent = "Inserisci un testo";
+        return;
     }
-    const parti = pulito.split(",");
+    let parti = colore.split(",");
     if (parti.length !== 3) {
-        throw new Error("Inserisci 3 valori (es. 255, 100, 50)");
+        err.textContent = "Inserisci 3 numeri separati (es. 255, 0, 0)";
+        return;
     }
-
-    const valoriNumerici = [];
-
-    for (let i = 0; i < parti.length; i++) {
-        const val = parti[i].trim();
-        if (val === "" || isNaN(val) || !Number.isInteger(Number(val))) {
-            throw new Error("Ogni componente RGB deve essere un numero intero");
-        }
-        const num = Number(val);
-
-        if (num < 0 || num > 255) {
-            throw new Error("I valori RGB devono essere compresi tra 0 e 255");
-        }
-
-        valoriNumerici.push(num);
+    let r = Number(parti[0]);
+    let g = Number(parti[1]);
+    let b = Number(parti[2]);
+    if (isNaN(r) || isNaN(g) || isNaN(b) || r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255) {
+        err.textContent = "I valori devono essere numeri tra 0 e 255";
+        return;
     }
-
-    return `rgb(${valoriNumerici[0]}, ${valoriNumerici[1]}, ${valoriNumerici[2]})`;
+    out.textContent = testo;
+    out.style.color = "rgb(" + r + "," + g + "," + b + ")";
 }
-
-function gestisciClick() {
-    const inputColore = document.getElementById("coloreRGB").value;
-    const inputTesto = document.getElementById("testoUtente").value;
-    const paragrafoOut = document.getElementById("out");
-    const paragrafoError = document.getElementById("error");
-    paragrafoOut.textContent = "";
-    paragrafoError.textContent = "";
-
-    console.log("Tentativo di elaborazione -> Colore:", inputColore, "| Testo:", inputTesto);
-
-    try {
-        if (inputTesto.trim() === "") {
-            throw new Error("Inserisci un testo");
-        }
-
-        const coloreValido = elaboraColoreRGB(inputColore);
-
-        paragrafoOut.textContent = inputTesto;
-        paragrafoOut.style.color = coloreValido;
-        
-        console.log("Successo! Colore applicato:", coloreValido);
-
-    } catch (errore) {
-        paragrafoError.textContent = "Errore: " + errore.message;
-        console.error("Errore di validazione:", errore.message);
-    }
+function reset() {
+    document.getElementById("inNumber").value = "";
+    document.getElementById("inText").value = "";
+    document.getElementById("outText").textContent = "Output";
+    document.getElementById("outText").style.color = "";
+    document.getElementById("error").textContent = "Errori";
 }
